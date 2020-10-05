@@ -1,5 +1,6 @@
 .idea
 __pycache__
 local_run.bat
+local_checkout.bat
 x_train.txt
 y_train.txt

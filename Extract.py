@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-SAMPLE_THRESHOLD = 200
+SAMPLE_THRESHOLD = 1000
 target_languages = ['zho', 'spa', 'eng', 'hin', 'ara']
 indexes = []
 
@@ -10,7 +10,7 @@ with open("languages.txt", "w") as output:
             if lng[:-1] in target_languages:
                 indexes.append(index)
                 output.write(lng)
-                if len(indexes) > SAMPLE_THRESHOLD:
+                if len(indexes) > SAMPLE_THRESHOLD - 1:
                     break;
 
 with open("texts.txt", "w", encoding="utf8") as output:

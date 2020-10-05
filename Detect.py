@@ -12,7 +12,7 @@ import os, requests, uuid, json, sys, csv
 class Detector:
     def __init__(self):
         self.label_to_str = {}
-        self.wiki_to_str = {}
+        self.wiki_to_str = {"zh-Hant": "StandardChinese", "zh-Hans": "StandardChinese"}
         with open('labels.csv', newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
             for id, row in enumerate(spamreader):
@@ -49,7 +49,13 @@ class Detector:
         }]
         request = requests.post(self.constructed_url, headers=self.headers, json=body)
         response = request.json()
-        return self.wiki_to_str[response[0]["language"]]
+        try:
+            lng = self.wiki_to_str[response[0]["language"]]
+        except KeyError as e:
+            lng = "error"
+            print("Language is not recognized: ", end="")
+            print(e)
+        return lng
 
 
 if __name__=='__main__':
