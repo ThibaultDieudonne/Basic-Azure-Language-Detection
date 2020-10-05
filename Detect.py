@@ -7,35 +7,52 @@
 # You may need to install requests and uuid.
 # Run: pip install requests uuid
 
-import os, requests, uuid, json
+import os, requests, uuid, json, sys, csv
 
-key_var_name = 'AZUREKEY'
-if not key_var_name in os.environ:
-    raise Exception('Please set/export the environment variable: {}'.format(key_var_name))
-subscription_key = os.environ[key_var_name]
+class Detector:
+    def __init__(self):
+        self.label_to_str = {}
+        self.wiki_to_str = {}
+        with open('labels.csv', newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+            for id, row in enumerate(spamreader):
+                if id:
+                    data = ''.join(row).split(';')
+                    self.label_to_str[data[0]] = data[1]
+                    self.wiki_to_str[data[2]] = data[1]
 
-endpoint_var_name = 'AZUREEDP'
-if not endpoint_var_name in os.environ:
-    raise Exception('Please set/export the environment variable: {}'.format(endpoint_var_name))
-endpoint = os.environ[endpoint_var_name]
+        key_var_name = 'AZUREKEY'
+        if not key_var_name in os.environ:
+            raise Exception('Please set/export the environment variable: {}'.format(key_var_name))
+        subscription_key = os.environ[key_var_name]
 
-# If you encounter any issues with the base_url or path, make sure
-# that you are using the latest endpoint: https://docs.microsoft.com/azure/cognitive-services/translator/reference/v3-0-detect
+        endpoint_var_name = 'AZUREEDP'
+        if not endpoint_var_name in os.environ:
+            raise Exception('Please set/export the environment variable: {}'.format(endpoint_var_name))
+        endpoint = os.environ[endpoint_var_name]
 
-path = '/Detect?api-version=3.0'
-constructed_url = endpoint + path
+        path = '/Detect?api-version=3.0'
+        self.constructed_url = endpoint + path
 
-headers = {
-    'Ocp-Apim-Subscription-Key': subscription_key,
-    'Content-type': 'application/json',
-    'X-ClientTraceId': str(uuid.uuid4()),
-    'Ocp-Apim-Subscription-Region': 'francecentral'
-}
+        self.headers = {
+            'Ocp-Apim-Subscription-Key': subscription_key,
+            'Content-type': 'application/json',
+            'X-ClientTraceId': str(uuid.uuid4()),
+            'Ocp-Apim-Subscription-Region': 'francecentral'
+        }
 
-# You can pass more than one object in body.
-body = [{
-    'text': 'Salve, mondo!'
-}]
-request = requests.post(constructed_url, headers=headers, json=body)
-response = request.json()
-print(json.dumps(response, sort_keys=True, indent=4, ensure_ascii=False, separators=(',', ': ')))
+    def get_language(self, text):
+        if text.upper() == "X":
+            sys.exit()
+        body = [{
+            'text': text
+        }]
+        request = requests.post(self.constructed_url, headers=self.headers, json=body)
+        response = request.json()
+        return self.wiki_to_str[response[0]["language"]]
+
+
+if __name__=='__main__':
+    detector = Detector()
+    while 1:
+        print(detector.get_language(input()))
