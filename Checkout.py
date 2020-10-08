@@ -17,5 +17,5 @@ if __name__=='__main__':
             if lng == expected_languages[index]:
                 successes += 1
             else:
-                print(f"Misdetect: {lng} instead of {expected_languages[index]}")
+                print(f"Misdetect: {lng} instead of {expected_languages[index]} in: \n{txt}")
     print(f'Performed full run over {tries} sentences, got {successes} correct ({round(100 * successes / tries, 1)}%)')
