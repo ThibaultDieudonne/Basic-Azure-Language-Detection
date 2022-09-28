@@ -1,7 +1,4 @@
-# OC-Projet1
-First project - AI Engineer
-
-This project is hosted at https://github.com/ThibaultDieudonne/OC-Projet1
+# Projet 1 (Formation Data Scientist - Ingénieur IA)
 
 "Detect.py" script originally comes from Text-Translation-API-V3-Python.
 
